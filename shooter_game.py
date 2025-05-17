@@ -21,6 +21,7 @@ mixer.music.play()
 game_run = True
 window.blit(background, (0, 0))
 speed = randint(2, 6)
+bullet_speed = 10
 random_x = randint(65, 635)
 class Game_sprite_class(sprite.Sprite):
     def __init__(self, filename, w, h, speed, x, y):
@@ -79,7 +80,7 @@ class Enemy_class(Game_sprite_class):
         current_time = time.get_ticks()
         if current_time - self.last_shot_time > self.shoot_interval:
             self.last_shot_time = current_time
-            bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, 10, self.rect.centerx, self.rect.bottom)
+            bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, bullet_speed, self.rect.centerx, self.rect.bottom)
             bullets_enemy.add(bullet_enemy)
     def update(self):
         global random_x
@@ -105,29 +106,29 @@ class Bullet_enemys_class(Game_sprite_class):
         self.rect.y += self.speed
         if self.rect.y > 510:
             self.kill()
-class Buff(Game_sprite_class):
-    def __init__(self, x, y, duration, filename, w, h, speed, typee):
-        super().__init__(filename, w, h, speed, x, y)
-        self.duration = duration
-        self.start_time = time.get_ticks()
-        self.active = True
-        self.typee = typee
-    def update(self):
-        if time.get_ticks() - self.start_time > self.duration:
-            self.active = False
-            self.kill()
+#class Buff(Game_sprite_class):
+#    def __init__(self, x, y, duration, filename, w, h, speed, typee):
+#        super().__init__(filename, w, h, speed, x, y)
+#        self.duration = duration
+#        self.start_time = time.get_ticks()
+#        self.active = True
+#        self.typee = typee
+#    def update(self):
+#        if time.get_ticks() - self.start_time > self.duration:
+#            self.active = False
+#            self.kill()
 buffs = sprite.Group()
 bullets = sprite.Group()
 bullets_enemy = sprite.Group()
-enemy1 = Enemy_class('ufo.png', 65, 35, randint(2, 6), random_x, -50)
+enemy1 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
 random_x = randint(65, 635)
-enemy2 = Enemy_class('ufo.png', 65, 35, randint(2, 6), random_x, -50)
+enemy2 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
 random_x = randint(65, 635)
-enemy3 = Enemy_class('ufo.png', 65, 35, randint(2, 6), random_x, -50)
+enemy3 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
 random_x = randint(65, 635)
-enemy4 = Enemy_class('ufo.png', 65, 35, randint(2, 6), random_x, -50)
+enemy4 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
 random_x = randint(65, 635)
-enemy5 = Enemy_class('ufo.png', 65, 35, randint(2, 6), random_x, -50)
+enemy5 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
 random_x = randint(65, 635)
 enemies = sprite.Group()
 enemies.add(enemy1, enemy2, enemy3, enemy4, enemy5)
@@ -146,6 +147,23 @@ while game_run:
             if e.type == MOUSEBUTTONDOWN:
                 x, y = e.pos
                 if button.rect.collidepoint(x, y):
+                    #нарисовать кнопки выбора сложности
+                if eazy_button.rect.collidepoint(x, y):
+                    speed = randint(1, 2)
+                    player.health = 200
+                    bullet_speed = 4
+                    menu = False
+                    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
+                if medium_button.rect.collidepoint(x, y):
+                    speed = randint(2, 4)
+                    player.health = 100
+                    bullet_speed = 7
+                    menu = False
+                    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
+                if hard_buttom.rect.collidepoint(x, y):
+                    speed = randint(4, 7)
+                    player.health = 100
+                    bullet_speed = 10
                     menu = False
                     background = transform.scale(image.load('galaxy.jpg'), (700, 500))
     if not game_finish and not menu:
@@ -163,15 +181,15 @@ while game_run:
         sprites_list_for_bullets = sprite.groupcollide(enemies, bullets, True, True)
         for i in sprites_list_for_bullets:
             kill += 1
-            if random.randint(0, 1) < 0.70:  # Случайное условие для создания баффа
-                if random.randint(1, 2) <= 1:
-                    typee = 'health'
-                if random.randint(1, 2) > 1:
-                    typee = 'bullet_boost'
-                buffs.add(Buff(random.randint(0, 780), random.randint(0, 580), 5000, 'qwertyui.png', 200, 60, 10, typee))  
-                print(f'Создан {typee}')
+            #if random.randint(0, 1) < 0.70:  # Случайное условие для создания баффа
+            #    if random.randint(1, 2) <= 1:
+            #        typee = 'health'
+            #    if random.randint(1, 2) > 1:
+            #        typee = 'bullet_boost'
+            #    buffs.add(Buff(random.randint(0, 780), random.randint(0, 580), 5000, 'buff_health.png', 200, 60, 10, typee))  
+            #    print(f'Создан {typee}')
             random_x = randint(65, 635)
-            enemy1 = Enemy_class('ufo.png', 65, 35, randint(2, 5), random_x, -50)
+            enemy1 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
             enemies.add(enemy1)
         for i in enemies:
             i.shoot()
@@ -182,11 +200,12 @@ while game_run:
             if not player.is_parrying:
                 player.health -= i.damage  # Игрок получает урон
                 print(f"Player Health: {player.health}")
-                bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, 10, enemy1.rect.centerx, enemy1.rect.bottom)
+                bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, bullet_speed, enemy1.rect.centerx, enemy1.rect.bottom)
                 bullets_enemy.add(bullet_enemy)
             else:
                 print("Attack parried!")
-                bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, 10, enemy1.rect.centerx, enemy1.rect.bottom)
+                #if time.get_ticks() - time_text_parry < 1000:
+                bullet_enemy = Bullet_enemys_class('bullet.png', 10, 20, bullet_speed, enemy1.rect.centerx, enemy1.rect.bottom)
                 bullets_enemy.add(bullet_enemy)
                 player.health = 100
                 player.fire()
@@ -220,11 +239,15 @@ while game_run:
             if not player.is_parrying:
                 player.health -= enemy1.damage  # Игрок получает урон
                 print(f"Player Health: {player.health}")
-                enemy1 = Enemy_class('ufo.png', 65, 35, randint(2, 5), random_x, -50)
+                enemy1 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
                 enemies.add(enemy1)
             else:
                 print("Attack parried!")
-                enemy1 = Enemy_class('ufo.png', 65, 35, randint(2, 5), random_x, -50)
+                #text_parry = font1.render('+ parry', 1, (225, 255, 255))
+                #window.blit(text_parry, (600, 50))
+                #print('закреплено')
+                #time_text_parry = time.get_ticks()
+                enemy1 = Enemy_class('ufo.png', 65, 35, speed, random_x, -50)
                 enemies.add(enemy1)
                 player.health = 100
                 kill += 1
