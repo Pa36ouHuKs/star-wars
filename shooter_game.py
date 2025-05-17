@@ -147,25 +147,26 @@ while game_run:
             if e.type == MOUSEBUTTONDOWN:
                 x, y = e.pos
                 if button.rect.collidepoint(x, y):
-                    #нарисовать кнопки выбора сложности
-                if eazy_button.rect.collidepoint(x, y):
-                    speed = randint(1, 2)
-                    player.health = 200
-                    bullet_speed = 4
                     menu = False
                     background = transform.scale(image.load('galaxy.jpg'), (700, 500))
-                if medium_button.rect.collidepoint(x, y):
-                    speed = randint(2, 4)
-                    player.health = 100
-                    bullet_speed = 7
-                    menu = False
-                    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
-                if hard_buttom.rect.collidepoint(x, y):
-                    speed = randint(4, 7)
-                    player.health = 100
-                    bullet_speed = 10
-                    menu = False
-                    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
+                #if eazy_button.rect.collidepoint(x, y):
+                #    speed = randint(1, 2)
+                #    player.health = 200
+                #    bullet_speed = 4
+                #    menu = False
+                #    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
+                #if medium_button.rect.collidepoint(x, y):
+                #    speed = randint(2, 4)
+                #    player.health = 100
+                #    bullet_speed = 7
+                #    menu = False
+                #    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
+                #if hard_buttom.rect.collidepoint(x, y):
+                #    speed = randint(4, 7)
+                #    player.health = 100
+                #    bullet_speed = 10
+                #    menu = False
+                #    background = transform.scale(image.load('galaxy.jpg'), (700, 500))
     if not game_finish and not menu:
         window.blit(background, (0, 0))
         player.reset()
